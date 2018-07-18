@@ -3,8 +3,8 @@ import numpy as np
 
 class Recog(object):
     def __init__(self):
-        self.face_cascade = cv.CascadeClassifier('/usr/share/OpenCV/haarcascades/haarcascade_frontalface_default.xml')
-        self.eye_cascade = cv.CascadeClassifier('/usr/share/OpenCV/haarcascades/haarcascade_eye.xml')
+        self.face_cascade = cv.CascadeClassifier('frontalface-cascade.xml')
+        #self.eye_cascade = cv.CascadeClassifier('/usr/share/OpenCV/haarcascades/haarcascade_eye.xml')
         #self.face_cascade = cv.CascadeClassifier('haarcascade4.xml')
     def detectFaces(self, img):
         gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)

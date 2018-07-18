@@ -32,26 +32,30 @@ class FaceDisplay(object):
 
 
 class MultiScreenFaceDisplay(FaceDisplay):
-    def __init__(self, displays, engine=None):
+    def __init__(self, displays):
         self._displays = displays
-        self._engine = engine
-
+        self._over = OverlayScreenFaceDisplay()
+        self._screens = [AutoScalingSingleScreenFaceDisplay(display.resolution) \
+            for display in self._displays]
 
     def render(self, frame):
 
+        self._over.clear()
+        self._over.add_face(self._faces)
+        yield self._over.render(frame)
 
-        overlay = OverlayScreenFaceDisplay().add_face(self._faces)
-        yield overlay.render(frame)
+        face_len = len(self._faces)
 
-        if len(self._faces) < len(self._displays):
+        if face_len < len(self._displays) and face_len != 0:
             faces = self._extend_array()
         else:
             faces = self._faces
 
-        screens = [AutoScalingSingleScreenFaceDisplay(display.resolution) \
-            for display in self._displays]
+        screens = self._screens
+        for screen in screens:
+            screen.clear()
         for i in range(len(faces)):
-            j = i%len(faces)
+            j = i%len(self._screens)
             screens[j].add_face(faces[i])
         for screen in screens:
             yield screen.render()
@@ -59,10 +63,10 @@ class MultiScreenFaceDisplay(FaceDisplay):
     def _extend_array(self):
         n = len(self._displays)
         m = len(self._faces)
-
         out = []
         for i in range(n):
-            out.append(self._faces[i%m])
+            face = self._faces[i%m]
+            out.append(face)
         return out
 
 
@@ -137,9 +141,10 @@ class AutoScalingSingleScreenFaceDisplay(FaceDisplay):
         num_faces = len(self._faces)
         if num_faces == 1:
             face = self._faces[0]
-            w //= 2
-            img = cv.resize(face.image, (h,w))
-            canvas[y:y+h, x+w//2:x+w//2+w] = img
+            n = min(h, w)
+            w = w-n
+            img = cv.resize(face.image, (n,n))
+            canvas[y:y+n, x+w//2:x+w//2+n] = img
         elif num_faces == 2:
             w //= 2
             n = min(h, w)

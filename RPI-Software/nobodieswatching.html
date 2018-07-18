@@ -1,0 +1,42 @@
+
+<!DOCTYPE html>
+
+<html>
+
+    <script>
+        var URL = "http://localhost:5000/img/over.jpg"
+
+        var newImage = new Image();
+        newImage.src = URL+"?" + new Date().getTime();
+
+        updateImage();
+
+
+        function updateImage()
+        {
+            if(newImage.complete) {
+                document.getElementById("stream").src = newImage.src;
+                newImage = new Image();
+                newImage.src = URL+"?" + new Date().getTime();
+            }
+
+            setTimeout(updateImage, 3000);
+        }
+
+        function sleep(ms){
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        
+    </script>
+
+
+    <head>
+        <title>Nobodies Watching</title>
+    </head>
+
+    <body style="background: black">
+        <img id="stream" style="width: 100%; height: 100%;" />
+    </body>
+
+</html>
