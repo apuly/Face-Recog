@@ -14,19 +14,27 @@
 
         function updateImage()
         {
-            if(newImage.complete) {
-                document.getElementById("stream").src = newImage.src;
-                newImage = new Image();
-                newImage.src = URL+"?" + new Date().getTime();
+            var checked = false;
+            var t = new Date().getTime();
+            t /= 1000;
+            t %= 10
+
+            console.log(t)
+            if(newImage.complete && t > 5 && t < 8) {
+                if (!checked){
+                    //checks if image is complete, and add a simple synchronisation in order to prevent rendering not fully written images
+                    document.getElementById("stream").src = newImage.src;
+                    newImage = new Image();
+                    newImage.src = URL+"?" + new Date().getTime(); //loads image with date added to circumvent cache
+                    //console.log(new Date().getTime());
+                    checked = true;
+                }
+            } else {
+                checked = false
             }
 
-            setTimeout(updateImage, 3000);
+            setTimeout(updateImage, 990); //execute every second
         }
-
-        function sleep(ms){
-            return new Promise(resolve => setTimeout(resolve, ms));
-        }
-
         
     </script>
 
