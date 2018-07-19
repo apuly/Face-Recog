@@ -10,11 +10,10 @@
         newImage.src = URL+"?" + new Date().getTime();
 
         updateImage();
-
+        var checked = false;
 
         function updateImage()
         {
-            var checked = false;
             var t = new Date().getTime();
             t /= 1000;
             t %= 10

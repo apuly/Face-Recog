@@ -34,16 +34,10 @@ class FaceDisplay(object):
 class MultiScreenFaceDisplay(FaceDisplay):
     def __init__(self, displays):
         self._displays = displays
-        self._over = OverlayScreenFaceDisplay()
         self._screens = [AutoScalingSingleScreenFaceDisplay(display.resolution) \
             for display in self._displays]
 
     def render(self, frame):
-
-        self._over.clear()
-        self._over.add_face(self._faces)
-        yield self._over.render(frame)
-
         face_len = len(self._faces)
 
         if face_len < len(self._displays) and face_len != 0:
@@ -151,10 +145,10 @@ class AutoScalingSingleScreenFaceDisplay(FaceDisplay):
             for i in range(num_faces): #iterate through faces
                 img = cv.resize(self._faces[i].image, (n,n))
                 canvas[y:y+n, x+w*i:x+w*i+n] = img
-        elif num_faces == 3:
+        elif num_faces >= 3:
             w //= 3
             n = min(h,w)
-            for i in range(num_faces): 
+            for i in range(3): #ensures that only 3 faces are rendered (renderer can't handle more) 
                 img = cv.resize(self._faces[i].image, (n,n))
                 canvas[y+h//6:y+n+h//6, x+w*i:x+w*i+n] = img
 

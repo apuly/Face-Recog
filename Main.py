@@ -18,46 +18,54 @@ from time import sleep, time
 
 def main(argv):
 
-    SHOW_FRAME = False
-    WRITE_FRAME = True
+    SHOW_FRAME = True
+    WRITE_FRAME = False
 
     start_webserver("0.0.0.0", 5000)
 
     dt = Detection.Recog()
     sync = SimpleSynchronise(10, 3)
     
-    #cam = Cam.URLCam("http://192.168.188.200:200/cam1/cam_pic.php")
-    cam = Cam.WebCam(0)
+    cam = Cam.URLCam("http://192.168.188.200:200/cam1/cam_pic.php")
+    #cam = Cam.WebCam(0)
     if SHOW_FRAME:
         cv.namedWindow("canvas")
 
     display = [Display((900, 1440))]*10
 
     renderer = MultiScreenFaceDisplay(display)
+    overlay = OverlayScreenFaceDisplay()
     while True:
         frame = cam.read_image()
         if frame is None:
              continue
 
-        frame = cv.resize(frame, (1440, 720))
+        frame = cv.resize(frame, (1280, 720))
 
         faces = dt.detectFaces(frame)
-        loaded = load_faces(frame, faces)
+        faces = list(faces)
+        print(faces)
+        loaded = list(load_faces(frame, faces))
 
+        overlay.clear()
         renderer.clear()
+
+        overlay.add_face(loaded)
         renderer.add_face(loaded)
+
+        img = overlay.render(frame)
         images = renderer.render(frame)
 
-        img = images.__next__()
         if SHOW_FRAME:
             cv.imshow("canvas", img)
+            if cv.waitKey(1) == ord('q'):
+                break
 
         if sync.check_sync():            
             if WRITE_FRAME:
                 cv.imwrite("img/over.jpg",img) #write overlay to special filename
 
-            i = 1
-            if WRITE_FRAME:
+                i = 1
                 for image in images:
                     cv.imwrite("img/{:>05}.jpg".format(i), image) #write images to file
                     i += 1
