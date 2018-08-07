@@ -15,6 +15,6 @@ class Recog(object):
             #    continue
             if x < 400 or x > 850:
                 continue
-            if x > 740 and y < 90:
-                continue
+            #if x > 740 and y < 90:
+            #    continue
             yield (x,y,w,h)

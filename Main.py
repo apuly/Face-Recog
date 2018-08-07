@@ -19,7 +19,7 @@ from time import sleep, time
 def main(argv):
 
     SHOW_FRAME = True
-    WRITE_FRAME = False
+    WRITE_FRAME = True
 
     start_webserver("0.0.0.0", 5000)
 
@@ -31,7 +31,7 @@ def main(argv):
     if SHOW_FRAME:
         cv.namedWindow("canvas")
 
-    display = [Display((900, 1440))]*10
+    display = [Display((900, 1440))]*9
 
     renderer = MultiScreenFaceDisplay(display)
     overlay = OverlayScreenFaceDisplay()
@@ -40,7 +40,7 @@ def main(argv):
         if frame is None:
              continue
 
-        frame = cv.resize(frame, (1280, 720))
+        frame = cv.resize(frame, (1440, 900))
 
         faces = dt.detectFaces(frame)
         faces = list(faces)
@@ -57,6 +57,7 @@ def main(argv):
         images = renderer.render(frame)
 
         if SHOW_FRAME:
+            #img2 = cv.resize(img, (1440, 900))
             cv.imshow("canvas", img)
             if cv.waitKey(1) == ord('q'):
                 break
